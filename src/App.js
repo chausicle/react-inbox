@@ -80,8 +80,25 @@ class App extends Component {
     })
   }
 
-  deleteMessages = () => {
+  deleteMessages = async () => {
     const messages = this.state.messages.filter(message => !message.selected);
+
+    // filter out selected messages
+    const selectedMessages = this.state.messages.filter(message => message.selected)
+
+    // PATCH request on deleting messages
+    await fetch("http://localhost:8082/api/messages", {
+      method: "PATCH",
+      body: JSON.stringify({
+        messageIds: [...selectedMessages.map(message => message.id)],
+        command: "delete"
+      }),
+      headers: {
+        "Content-Type": "application/json",
+        "Accept": "application/json"
+      }
+    })
+
     this.setState({ messages })
   }
 
@@ -128,7 +145,7 @@ class App extends Component {
     // filter out selected messages
     const selectedMessages = this.state.messages.filter(message => message.selected)
 
-    // PATCH request on applying labels
+    // PATCH request on removing labels
     await fetch("http://localhost:8082/api/messages", {
       method: "PATCH",
       body: JSON.stringify({
