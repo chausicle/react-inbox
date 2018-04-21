@@ -3,7 +3,7 @@ import MessageComponent from './MessageComponent';
 
 class MessagesComponent extends Component {
   render() {
-    console.log("this.props on messages component = ", this.props);
+    // console.log("this.props on messages component = ", this.props);
     const { messages, toggleStar, toggleSelect } = this.props
 
     return (

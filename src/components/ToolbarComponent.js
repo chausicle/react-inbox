@@ -32,8 +32,12 @@ class ToolbarComponent extends Component {
         <div className="col-md-12">
           <p className="pull-right">
             <span className="badge badge">{unreadCount}</span>
-            unread messages
+              unread messages
           </p>
+
+          <a className="btn btn-danger">
+            <i className="fa fa-plus"></i>
+          </a>
 
           <button className="btn btn-default" onClick={toggleSelectAll}>
             <i className={`fa ${selectAllClass}`}/>

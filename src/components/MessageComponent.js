@@ -3,7 +3,7 @@ import React, { Component } from 'react';
 class MessageComponent extends Component {
   render() {
     const { message, toggleStar, toggleSelect } = this.props;
-console.log("message   =   ", message);
+// console.log("message   =   ", message);
     const readClass = message.read ? "read" : "unread";
     const starClass = message.starred ? "fa-star" : "fa-star-o";
     const selectedClass = message.selected ? "selected" : "";

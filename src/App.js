@@ -5,11 +5,21 @@ import MessagesComponent from './components/MessagesComponent';
 class App extends Component {
 
   state = {
-    messages: this.props.messages
+    messages: []
   }
 
-  toggleProperty = (message, property) => {
-    const index = this.state.messages.indexOf(message);
+  componentDidMount = async () => {
+    const response = await fetch("http://localhost:8082/api/messages")
+    const messages = await response.json()
+
+    this.setState({
+      messages: [...this.state.messages, ...messages]
+    })
+  }
+
+  toggleProperty = async (message, property) => {
+    const index = this.state.messages.indexOf(message)
+
     this.setState({
       messages: [
         ...this.state.messages.slice(0, index),
@@ -19,12 +29,26 @@ class App extends Component {
     })
   }
 
-  toggleStar = message => {
+  toggleStar = async (message) => {
+    // PATCH request
+    await fetch("http://localhost:8082/api/messages", {
+      method: "PATCH",
+      body: JSON.stringify({
+        messageIds: [message.id],
+        command: "star",
+        star: message.starred
+      }),
+      headers: {
+        "Content-Type": "application/json",
+        "Accept": "application/json"
+      }
+    })
+
     this.toggleProperty(message, "starred")
   }
 
   toggleSelect = message => {
-    this.toggleProperty(message, "selected");
+    this.toggleProperty(message, "selected")
   }
 
   markReadStatus = readStatus => {
@@ -67,7 +91,7 @@ class App extends Component {
   }
 
   toggleSelectAll = () => {
-    const selectedMessages = this.state.messages.filter(message => message.selected);
+    const selectedMessages = this.state.messages.filter(message => message.selected)
 
     const selected = selectedMessages.length !== this.state.messages.length
     this.setState({
