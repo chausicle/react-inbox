@@ -13,7 +13,13 @@ class App extends Component {
     const messages = await response.json()
 
     this.setState({
-      messages: [...this.state.messages, ...messages]
+      messages: [
+        ...this.state.messages,
+        ...messages.map(message => ({
+          ...message,
+          selected: false
+        }))
+      ]
     })
   }
 
@@ -30,7 +36,7 @@ class App extends Component {
   }
 
   toggleStar = async (message) => {
-    // PATCH request
+    // PATCH request on starred
     await fetch("http://localhost:8082/api/messages", {
       method: "PATCH",
       body: JSON.stringify({
@@ -51,7 +57,24 @@ class App extends Component {
     this.toggleProperty(message, "selected")
   }
 
-  markReadStatus = readStatus => {
+  markReadStatus = async readStatus => {
+    // filter out selected messages
+    const message = this.state.messages.filter(message => message.selected)
+
+    // PATCH request on mark read status
+    await fetch("http://localhost:8082/api/messages", {
+      method: "PATCH",
+      body: JSON.stringify({
+        messageIds: [...message.map(message => message.id)],
+        command: "read",
+        read: readStatus
+      }),
+      headers: {
+        "Content-Type": "application/json",
+        "Accept": "application/json"
+      }
+    })
+
     this.setState({
       messages: this.state.messages.map(message => (message.selected ? {...message, read: readStatus} : message))
     })
