@@ -35,7 +35,7 @@ class App extends Component {
     })
   }
 
-  toggleStar = async (message) => {
+  toggleStar = async message => {
     // PATCH request on starred
     await fetch("http://localhost:8082/api/messages", {
       method: "PATCH",
@@ -59,13 +59,13 @@ class App extends Component {
 
   markReadStatus = async readStatus => {
     // filter out selected messages
-    const message = this.state.messages.filter(message => message.selected)
+    const selectedMessages = this.state.messages.filter(message => message.selected)
 
     // PATCH request on mark read status
     await fetch("http://localhost:8082/api/messages", {
       method: "PATCH",
       body: JSON.stringify({
-        messageIds: [...message.map(message => message.id)],
+        messageIds: [...selectedMessages.map(message => message.id)],
         command: "read",
         read: readStatus
       }),
@@ -85,20 +85,36 @@ class App extends Component {
     this.setState({ messages })
   }
 
-  applyLabel = label => {
+  applyLabel = async label => {
     const messages = this.state.messages.map(message =>
       message.selected && !message.labels.includes(label)
         ? {...message, labels: [...message.labels, label].sort()}
         : message
     )
+    // filter out selected messages
+    const selectedMessages = this.state.messages.filter(message => message.selected)
+
+    // PATCH request on applying labels
+    await fetch("http://localhost:8082/api/messages", {
+      method: "PATCH",
+      body: JSON.stringify({
+        messageIds: [...selectedMessages.map(message => message.id)],
+        command: "addLabel",
+        label
+      }),
+      headers: {
+        "Content-Type": "application/json",
+        "Accept": "application/json"
+      }
+    })
 
     this.setState({ messages })
   }
 
-  removeLabel = label => {
+  removeLabel = async label => {
     const messages = this.state.messages.map(message => {
       const index = message.labels.indexOf(label)
-      if (messages.selected && index > -1) {
+      if (message.selected && index > -1) {
         return {
           ...message,
           labels: [
@@ -108,6 +124,22 @@ class App extends Component {
         }
       }
       return message
+    })
+    // filter out selected messages
+    const selectedMessages = this.state.messages.filter(message => message.selected)
+
+    // PATCH request on applying labels
+    await fetch("http://localhost:8082/api/messages", {
+      method: "PATCH",
+      body: JSON.stringify({
+        messageIds: [...selectedMessages.map(message => message.id)],
+        command: "removeLabel",
+        label
+      }),
+      headers: {
+        "Content-Type": "application/json",
+        "Accept": "application/json"
+      }
     })
 
     this.setState({ messages })
