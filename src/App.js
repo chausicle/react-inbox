@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import ToolbarComponent from './components/ToolbarComponent';
 import MessagesComponent from './components/MessagesComponent';
+import ComposeMessageComponent from './components/ComposeMessageComponent';
 
 class App extends Component {
 
@@ -19,8 +20,40 @@ class App extends Component {
           ...message,
           selected: false
         }))
-      ]
+      ],
+      display: false
     })
+  }
+
+  toggleCompose = () => {
+    this.setState({ display: !this.state.display })
+  }
+
+  addMessage = async (composeMessage) => {
+    const { subject, body } = composeMessage
+    const response = await fetch("http://localhost:8082/api/messages", {
+      method: "POST",
+      body: JSON.stringify({
+        subject,
+        body
+      }),
+      headers: {
+        "Content-Type": "application/json",
+        "Accept": "application/json"
+      }
+    })
+    const message = await response.json()
+    console.log("messages === ", this.state.messages);
+    console.log("new message == ", message);
+
+    this.setState({
+      messages: [
+        ...this.state.messages,
+        message
+      ],
+      display: !this.state.display
+    })
+    console.log(this.state);
   }
 
   toggleProperty = async (message, property) => {
@@ -173,15 +206,21 @@ class App extends Component {
 
 
   render() {
+    console.log("--render in App--");
     return (
       <div className="App">
         <ToolbarComponent
           messages={this.state.messages}
+          toggleCompose={this.toggleCompose}
           toggleSelectAll={this.toggleSelectAll}
           markReadStatus={this.markReadStatus}
           deleteMessages={this.deleteMessages}
           applyLabel={this.applyLabel}
           removeLabel={this.removeLabel}
+        />
+        <ComposeMessageComponent
+          display={this.state.display}
+          addMessage={this.addMessage}
         />
         <MessagesComponent
           messages={this.state.messages}

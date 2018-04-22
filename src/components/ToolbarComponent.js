@@ -5,6 +5,7 @@ class ToolbarComponent extends Component {
   render() {
     const {
       messages,
+      toggleCompose,
       toggleSelectAll,
       markReadStatus,
       deleteMessages,
@@ -35,7 +36,9 @@ class ToolbarComponent extends Component {
               unread messages
           </p>
 
-          <a className="btn btn-danger">
+          <a
+            className="btn btn-danger"
+            onClick={toggleCompose}>
             <i className="fa fa-plus"></i>
           </a>
 
