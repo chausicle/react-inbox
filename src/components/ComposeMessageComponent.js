@@ -6,8 +6,8 @@ class ComposeMessageComponent extends Component {
 
     const sendMessage = e => {
       e.preventDefault()
-      const subject = document.querySelector("input[name='subject']")
-      const body = document.querySelector("textarea[name='body']")
+      const subject = document.querySelector("#subject")
+      const body = document.querySelector("#body")
 
       addMessage({ subject: subject.value, body: body.value })
 
